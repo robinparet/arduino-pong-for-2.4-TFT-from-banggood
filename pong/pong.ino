@@ -5,16 +5,21 @@
 #include <Adafruit_TFTLCD.h> // Hardware-specific library
 #include <TouchScreen.h> //touchscreen library
 
+#include <Adafruit_GFX.h>    // Core graphics library
+#include <Adafruit_TFTLCD.h> // Hardware-specific library
+#include <TouchScreen.h> //touchscreen library
+
 #if defined(__SAM3X8E__) //some weird stuff to setup everything
     #undef __FlashStringHelper::F(string_literal)
     #define F(string_literal) string_literal
 #endif
-
+int need = 5;
+int bounces = 0;
 int placeb1 = 110; //position variables for the bars
 int placeb2 = 110;
 int offset = 1; //the angle where the brick needs to be pushed
 int placerectx = 90; //position variables for the brick
-int placerecty = 110;
+int placerecty = 109;
 int player = 1; //variable for the indicator of who can control his bar
 int point1 = 0; //variables for counting the point each player has scored
 int point2 = 0;
@@ -57,7 +62,7 @@ Adafruit_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 int State = LOW;            
 unsigned long previousMillis = 0;
 // constants won't change :
-const long interval = 15;
+long interval = 15;
 
 void setup() {
  
@@ -94,6 +99,7 @@ void setup() {
   tft.fillRect(210, 290, 30, 30, GREEN);
   tft.fillRect(placeb1, 0, 40, 10, WHITE); 
   tft.fillRect(placeb2, 310, 40, 10, WHITE);
+
 }
 //this is for the touchscreen, you can change the pressure preferences to whatever you like
 #define MINPRESSURE 10
@@ -149,35 +155,38 @@ void loop()
   if(placerecty <= 3){ //if the brick is too far away to push back from the pallet, end the game and tell the score
     tft.fillRect(placerectx, placerecty, 10, 10, BLACK);
     point2 = point2 + 1;
+    Serial.println("game over!");
     Serial.print("points: ");
     Serial.print(point1);
     Serial.print(" | ");
     Serial.println(point2);
     placerectx = 90;
-    placerecty = 110;
+    placerecty = 109;
     offset = 1;
     player = 1;
     tft.fillRect(0, 0, 30, 30, RED); //change the indicators for who is controlling his pallet
-     tft.fillRect(210, 0, 30, 30, RED);
-     tft.fillRect(0, 290, 30, 30, GREEN);
-     tft.fillRect(210, 290, 30, 30, GREEN);
+    tft.fillRect(210, 0, 30, 30, RED);
+    tft.fillRect(0, 290, 30, 30, GREEN);
+    tft.fillRect(210, 290, 30, 30, GREEN);
     delay(2500);
     }
   if(placerecty >= 317){ //if the brick is too far away to push back from the pallet, end the game and tell the score
     tft.fillRect(placerectx, placerecty, 10, 10, BLACK);
     point1 = point1 + 1;
+    Serial.println("game over!");
     Serial.print("points: ");
     Serial.print(point1);
     Serial.print(" | ");
     Serial.println(point2);
     placerectx = 90;
-    placerecty = 110;
+    placerecty = 109;
     offset = 1;
     player = 1;
     tft.fillRect(0, 0, 30, 30, RED); //change the indicators for who is controlling his pallet
-     tft.fillRect(210, 0, 30, 30, RED);
-     tft.fillRect(0, 290, 30, 30, GREEN);
-     tft.fillRect(210, 290, 30, 30, GREEN);
+    tft.fillRect(210, 0, 30, 30, RED);
+    tft.fillRect(0, 290, 30, 30, GREEN);
+    tft.fillRect(210, 290, 30, 30, GREEN);
+    interval = 15;
     delay(2500);
     
     }
@@ -223,6 +232,7 @@ void loop()
       if (offset == 5){
         offset = 6;
         }
+      bounces ++;
     }
     if(placerectx <= 40 && placerecty){
       if (offset == 2){
@@ -231,6 +241,7 @@ void loop()
       if (offset == 6){
         offset = 5;
         }
+      bounces ++;
     }
     if(placerectx >= placeb2 - 9 && placerectx <= placeb2 + 48 && placerecty >= 300 && placerecty <= 313){ //code for seeing if the brick hit the pallet and then changes the offset of the brick
      if(offset == 1){
@@ -258,8 +269,15 @@ void loop()
      tft.fillRect(210, 290, 30, 30, GREEN);
      player = 1;
      }
-
+  if (bounces >= need){
+    interval = interval - 1;
+    need = need + 5;
+    }
   }
+ 
+ }
+
+
  
  }
 
