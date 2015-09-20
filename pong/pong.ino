@@ -43,8 +43,9 @@ TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 #define LCD_RD A0
 // optional
 #define LCD_RESET A4
-
-// Assign human-readable names to some common 16-bit color values:
+//Assign human-readable names to some common 16-bit color values:
+// if the background is not black and the ball not white, uncomment this an comment the other definitions of colors
+/*
 #define	BLACK   0xFFFF   
 #define	BLUE    0xFFE0   
 #define	RED     0x07FF   
@@ -53,7 +54,18 @@ TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 #define MAGENTA 0x07E0   
 #define YELLOW  0x001F   
 #define WHITE   0x0000   
+*/
 
+// if the background is not black and the ball not white, comment this an uncomment the other definitions of colors
+
+#define BLACK    0x0000
+#define BLUE     0x001F
+#define RED      0xF800
+#define GREEN    0x07E0
+#define CYAN     0x07FF
+#define MAGENTA  0xF81F
+#define YELLOW   0xFFE0 
+#define WHITE    0xFFFF
 
 Adafruit_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
